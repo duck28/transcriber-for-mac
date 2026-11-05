@@ -1,0 +1,26 @@
+# Builds Transcriber for Mac on every push to main and on pull requests.
+# It doesn't publish anything; releases come from release.yml.
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Transcriber.app and Transcriber.dmg
+        run: ./build.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Transcriber-mac-arm64
+          path: build/Transcriber.dmg

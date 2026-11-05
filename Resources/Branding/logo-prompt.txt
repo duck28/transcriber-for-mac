@@ -1,0 +1,5 @@
+Generated using the built-in image_gen tool.
+
+Use case: logo-brand
+Asset type: logo for Transcriber, a native macOS app that privately converts system audio into text on the device.
+Primary request: Create one polished, distinctive standalone app logo combining a compact audio waveform that transitions into three clean horizontal text lines, forming one coherent geometric symbol. Simple, balanced, confident, friendly native desktop utility aesthetic. Bold rounded geometry, precise spacing, excellent small-size legibility. Center the mark with generous padding on a square canvas. Use a restrained cohesive color treatment suitable for a modern macOS utility. Flat vector-like finish, crisp edges. Genuine transparent background. No words, letters, mockup, presentation board, extra icons, watermark, fine details, or drop shadow.

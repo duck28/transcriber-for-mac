@@ -1,0 +1,55 @@
+# Builds Transcriber for Mac when a version tag (v1.2.3) is pushed, attests the disk image
+# (build provenance), and creates a draft GitHub release to review and publish.
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions: {}
+
+jobs:
+  release:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tag matches app version
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Resources/Info.plist)"
+          if [ "$tag" != "$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match CFBundleShortVersionString $version in Resources/Info.plist"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Build Transcriber.app and Transcriber.dmg
+        run: |
+          xcrun --show-sdk-version
+          ./build.sh
+
+      - name: Name the disk image
+        run: mv build/Transcriber.dmg "build/Transcriber-${{ steps.version.outputs.version }}-mac-arm64.dmg"
+
+      - name: Generate artifact attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: build/Transcriber-${{ steps.version.outputs.version }}-mac-arm64.dmg
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "Transcriber for Mac ${{ steps.version.outputs.version }}" \
+            --draft \
+            --verify-tag \
+            --generate-notes \
+            "build/Transcriber-${{ steps.version.outputs.version }}-mac-arm64.dmg"
