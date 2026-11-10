@@ -20,7 +20,7 @@ jobs:
       - name: Build Transcriber.app and Transcriber.dmg
         run: ./build.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Transcriber-mac-arm64
           path: build/Transcriber.dmg
